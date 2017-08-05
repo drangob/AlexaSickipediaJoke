@@ -52,11 +52,19 @@ function onSessionStarted(sessionStartedRequest, session) {
 function onLaunch(launchRequest, session, callback) {
     console.log("onLaunch requestId=" + launchRequest.requestId
         + ", sessionId=" + session.sessionId);
-
-    var cardTitle = "Sickipedia"
-    var speechOutput = "You can ask Sickipedia to tell you a joke."
+	
+	var speech = new Speech();
+    speech.say("You can ask Sickipedia Jokes to tell you a joke.");
+	speech.pause('200ms');
+	speech.say("For example");
+	speech.pause('100ms');
+	speech.say("Sickipedia Jokes"); 
+	speech.pause('100ms');
+	speech.say("tell me a joke");
+	
+	var speechOutput = "<speak>" + speech.ssml(true) + "</speak>";
     callback(session.attributes,
-        buildSpeechletResponse(cardTitle, speechOutput, "", true));
+        buildSpeechletResponseWithoutCard(speechOutput, "", true));
 }
 
 //specific intent
