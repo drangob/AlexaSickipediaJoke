@@ -49,11 +49,7 @@ function onSessionStarted(sessionStartedRequest, session) {
 		+ ", sessionId=" + session.sessionId);
 }
 
-//Skill launched without any intent
-function onLaunch(launchRequest, session, callback) {
-	console.log("onLaunch requestId=" + launchRequest.requestId
-		+ ", sessionId=" + session.sessionId);
-	
+function getHelpMsg(){
 	var speech = new Speech();
 	speech.say("You can ask Sickipedia Jokes to tell you a joke.");
 	speech.pause('200ms');
@@ -64,8 +60,16 @@ function onLaunch(launchRequest, session, callback) {
 	speech.say("to tell me a joke");
 	
 	var speechOutput = "<speak>" + speech.ssml(true) + "</speak>";
+	return speechOutput;
+}
+
+//Skill launched without any intent
+function onLaunch(launchRequest, session, callback) {
+	console.log("onLaunch requestId=" + launchRequest.requestId
+		+ ", sessionId=" + session.sessionId);
+	
 	callback(session.attributes,
-		buildSpeechletResponseWithoutCard(speechOutput, "Request now", false));
+		buildSpeechletResponseWithoutCard(getHelpMsg(), "Request now", false));
 }
 
 //specific intent
@@ -79,8 +83,16 @@ function onIntent(intentRequest, session, callback) {
 	// if the user asks for a joke, happy days, lets get them one
 	if (intentName == 'RequestJoke') {
 		handleJokeRequest(intent, session, callback);
-	}
-	else {
+	} else if (intentName == 'AMAZON.HelpIntent') {
+		callback(session.attributes,
+			buildSpeechletResponseWithoutCard(getHelpMsg(), "Request now", false));
+	} else if (intentName == 'AMAZON.CancelIntent') {
+		callback(session.attributes,
+			buildSpeechletResponseWithoutCard("", "", true));
+	} else if (intentName == 'AMAZON.StopIntent') {
+		callback(session.attributes,
+			buildSpeechletResponseWithoutCard("", "", true));
+	} else {
 		throw "Invalid intent";
 	}
 }
